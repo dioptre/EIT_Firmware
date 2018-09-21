@@ -246,7 +246,7 @@ uint32_t seq_afe_fast_acmeasBioZ_4wire[] = {
 extern void initialise_monitor_handles(void);
 
 int main(void) {
-#ifdef DEBUG
+#if defined (DEBUG) && defined (__GNUC__)
 	initialise_monitor_handles();
 #endif
     ADI_AFE_DEV_HANDLE  hDevice;
