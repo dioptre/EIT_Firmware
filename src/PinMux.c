@@ -1,8 +1,8 @@
 /*
  **
- ** Source file generated on April 17, 2013 at 11:18:06.	
+ ** Source file generated on November 26, 2014 at 13:02:50.	
  **
- ** Copyright (C) 2013 Analog Devices Inc., All Rights Reserved.
+ ** Copyright (C) 2014 Analog Devices Inc., All Rights Reserved.
  **
  ** This file is generated automatically based upon the options selected in 
  ** the Pin Multiplexing configuration editor. Changes to the Pin Multiplexing
@@ -22,7 +22,7 @@
 
 #define UART0_TX_PORTP0_MUX  ((uint16_t) ((uint16_t) 2<<12))
 #define UART0_RX_PORTP0_MUX  ((uint16_t) ((uint16_t) 2<<14))
-
+#define SYS_CLK_OUT_CLOCK_OUT_PORTP1_MUX  ((uint16_t) ((uint16_t) 3<<14))
 
 
 int32_t adi_initpinmux(void);
@@ -33,6 +33,7 @@ int32_t adi_initpinmux(void);
 int32_t adi_initpinmux(void) {
     /* Port Control MUX registers */
     *((volatile uint32_t *)REG_GPIO0_GPCON) = UART0_TX_PORTP0_MUX | UART0_RX_PORTP0_MUX;
+    //*((volatile uint32_t *)REG_GPIO1_GPCON) = SYS_CLK_OUT_CLOCK_OUT_PORTP1_MUX;
 
 
     return 0;
