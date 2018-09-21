@@ -251,21 +251,23 @@ WEAK_FUNC (void ResetISR (void)) {
 #endif
 
 #ifdef __GNUC__
-    //AG
-//    unsigned long *pulSrc, *pulDest;
-//
-//    // Copy initialised data from flash into RAM
-//    pulSrc = &_etext;
-//    for(pulDest = &_sdata; pulDest < &_edata; )
-//    {
-//        *pulDest++ = *pulSrc++;
-//    }
-//
-//    // Clear the bss segment
-//    for(pulDest = &_sbss; pulDest < &_ebss; )
-//    {
-//        *pulDest++ = 0;
-//    }
+	//AG
+	#if defined(NDEBUG)
+	unsigned long *pulSrc, *pulDest;
+
+	// Copy initialised data from flash into RAM
+	pulSrc = &_etext;
+	for(pulDest = &_sdata; pulDest < &_edata; )
+	{
+		*pulDest++ = *pulSrc++;
+	}
+
+	// Clear the bss segment
+	for(pulDest = &_sbss; pulDest < &_ebss; )
+	{
+		*pulDest++ = 0;
+	}
+	#endif
 
     // Call application main directly.
     main();
