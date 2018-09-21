@@ -120,6 +120,7 @@
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.usenewlibnano.828561268" name="Use newlib-nano (--specs=nano.specs)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.usenewlibnano" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.libs.103455775" name="Libraries (-l)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.libs" useByScannerDiscovery="false" valueType="libs">
 									<listOptionValue builtIn="false" value="arm_cortexM3l_math"/>
+									<listOptionValue builtIn="false" value="rdimon"/>
 									<listOptionValue builtIn="false" value="gcc"/>
 									<listOptionValue builtIn="false" value="c"/>
 									<listOptionValue builtIn="false" value="m"/>

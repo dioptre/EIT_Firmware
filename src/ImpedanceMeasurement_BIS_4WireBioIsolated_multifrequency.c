@@ -242,11 +242,12 @@ uint32_t seq_afe_fast_acmeasBioZ_4wire[] = {
 //};
 //
 
-
+#if defined (DEBUG) && defined (__GNUC__) && !defined (NDEBUG)
 extern void initialise_monitor_handles(void);
+#endif
 
 int main(void) {
-#if defined (DEBUG) && defined (__GNUC__)
+#if defined (DEBUG) && defined (__GNUC__) && !defined (NDEBUG)
 	initialise_monitor_handles();
 #endif
     ADI_AFE_DEV_HANDLE  hDevice;
@@ -282,25 +283,40 @@ int main(void) {
     stringfreqs[13] = "60000";     
     stringfreqs[14] = "70000";   
   
-     
     /* Initialize system */
     SystemInit();
 
     /* Change the system clock source to HFXTAL and change clock frequency to 16MHz     */
     /* Requirement for AFE (ACLK)                                                       */
-    if (ADI_SYS_SUCCESS != SystemTransitionClocks(ADI_SYS_CLOCK_TRIGGER_MEASUREMENT_ON))
-    {
-        FAIL("SystemTransitionClocks");
-    }
-    
-    /* SPLL with 32MHz used, need to divide by 2 */
-    SetSystemClockDivider(ADI_SYS_CLOCK_UART, 2);
-    
+    SystemTransitionClocks(ADI_SYS_CLOCK_TRIGGER_MEASUREMENT_OFF);
+
+    // Change HCLK clock divider to 1 for a 16MHz clock
+       if (ADI_SYS_SUCCESS != SetSystemClockDivider(ADI_SYS_CLOCK_CORE, 1))
+       {
+           test_Fail("SetSystemClockDivider() failed");
+       }
+
+       // Change PCLK clock divider to 1 for a 16MHz clock
+       if (ADI_SYS_SUCCESS != SetSystemClockDivider(ADI_SYS_CLOCK_UART, 1))
+       {
+           test_Fail("SetSystemClockDivider() failed");
+   }
+
+
+    BlinkSetup();
+    Blink();
+
     /* Test initialization */
     test_Init();
 
     /* Initialize static pinmuxing */
     adi_initpinmux();
+
+    SystemTransitionClocks(ADI_SYS_CLOCK_TRIGGER_MEASUREMENT_ON);
+
+    /* SPLL with 32MHz used, need to divide by 2 */
+    SetSystemClockDivider(ADI_SYS_CLOCK_UART, 2);
+
 
     /* Initialize the UART for transferring measurement data out */
     if (ADI_UART_SUCCESS != uart_Init())
