@@ -324,11 +324,17 @@ int main(void) {
         FAIL("uart_Init");
     }
 
+
     /* Initialize the AFE API */
     if (ADI_AFE_SUCCESS != adi_AFE_Init(&hDevice)) 
     {
         FAIL("Init");
     }
+
+//TODO: AG Reset isn't resetting INT in AFE (CRC)
+//    adi_AFE_PowerDown(hDevice);
+//    adi_AFE_UnInit(hDevice);
+//    adi_AFE_Init(&hDevice);
 
     /* Set RCAL and RTIA values */
     if (ADI_AFE_SUCCESS != adi_AFE_SetRcal(hDevice, RCAL)) 
@@ -339,6 +345,8 @@ int main(void) {
     {
         FAIL("adi_AFE_SetTia");
     }
+
+
 
     /* AFE power up */
     if (ADI_AFE_SUCCESS != adi_AFE_PowerUp(hDevice)) 
