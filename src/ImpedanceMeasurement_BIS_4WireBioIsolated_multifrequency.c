@@ -18,14 +18,12 @@ License Agreement.
  * @date:    $Date: 2014-12-08 08:53:03 -0500 (Mon, 08 Dec 2014) $
  *****************************************************************************/
 
-#include <time.h>
-#include <stddef.h>  // for 'NULL'
-#include <stdio.h>   // for scanf
-#include <string.h>  // for strncmp
-#include <stdint.h>
+#include <stdio.h>
 #define ARM_MATH_CM3 1
 #include "arm_math.h"
+
 #include "test_common.h"
+
 #include "afe.h"
 #include "afe_lib.h"
 #include "uart.h"
@@ -36,6 +34,7 @@ License Agreement.
 /*      1 = return AFE data on UART                         */
 /*      0 = return AFE data on SW (Std Output)              */
 #define USE_UART_FOR_DATA           (1)
+
 
 /* Excitation frequency in Hz */
 // #define FREQ                        (50000)
@@ -243,7 +242,7 @@ uint32_t seq_afe_fast_acmeasBioZ_4wire[] = {
 //
 
 #if defined (DEBUG) && defined (__GNUC__) && !defined (NDEBUG)
-extern void initialise_monitor_handles(void);
+	extern void initialise_monitor_handles(void);
 #endif
 
 int main(void) {
@@ -259,10 +258,7 @@ int main(void) {
     uint32_t            offset_code;
     uint32_t            gain_code;
     uint32_t            rtiaAndGain;
-    int8_t              sweeping;
-    int8_t              j,k;    
-
-    sweeping = SWEEPING;    
+    int8_t              j,k;
     
     uint64_t multifrequency[] = {200,500,800,1000,2000,5000,8000,10000,15000,20000,30000,40000,50000,60000,70000};
     char *stringfreqs[MULTIFREQUENCY_ARRAY_SIZE];
@@ -286,9 +282,11 @@ int main(void) {
     /* Initialize system */
     SystemInit();
 
+
     /* Change the system clock source to HFXTAL and change clock frequency to 16MHz     */
     /* Requirement for AFE (ACLK)                                                       */
-    SystemTransitionClocks(ADI_SYS_CLOCK_TRIGGER_MEASUREMENT_OFF);
+    //SystemTransitionClocks(ADI_SYS_CLOCK_TRIGGER_MEASUREMENT_OFF);
+
 
     // Change HCLK clock divider to 1 for a 16MHz clock
        if (ADI_SYS_SUCCESS != SetSystemClockDivider(ADI_SYS_CLOCK_CORE, 1))
@@ -303,8 +301,6 @@ int main(void) {
    }
 
 
-    BlinkSetup();
-    Blink();
 
     /* Test initialization */
     test_Init();
@@ -312,10 +308,10 @@ int main(void) {
     /* Initialize static pinmuxing */
     adi_initpinmux();
 
-    SystemTransitionClocks(ADI_SYS_CLOCK_TRIGGER_MEASUREMENT_ON);
 
-    /* SPLL with 32MHz used, need to divide by 2 */
-    SetSystemClockDivider(ADI_SYS_CLOCK_UART, 2);
+//
+//    /* SPLL with 32MHz used, need to divide by 2 */
+//    SetSystemClockDivider(ADI_SYS_CLOCK_UART, 2);
 
 
     /* Initialize the UART for transferring measurement data out */
@@ -324,6 +320,7 @@ int main(void) {
         FAIL("uart_Init");
     }
 
+    //SystemTransitionClocks(ADI_SYS_CLOCK_TRIGGER_MEASUREMENT_ON);
 
     /* Initialize the AFE API */
     if (ADI_AFE_SUCCESS != adi_AFE_Init(&hDevice)) 
@@ -394,6 +391,8 @@ int main(void) {
         FAIL("adi_AFE_WriteCalibrationRegister, offset");
     }
 
+
+
     /* Update FCW in the sequence */
     //seq_afe_poweritup[3] = SEQ_MMR_WRITE(REG_AFE_AFE_WG_FCW, FCW);
     /* Update sine amplitude in the sequence */
@@ -411,15 +410,18 @@ int main(void) {
     // PRINT("AFE PROBLEM!");
     //}        
 
+
     PRINT("READY TO START FOR LOOP\n");     
-    int sweep_max         = 10000;        // do only hundred runs of each frequency sweep. 
-    int sweep_iterator    = 0;
-  
-    while (sweeping) /* this outerloop just keeps running through the multifrequency sweep. */
-    {
-      for (j = 0; j < MULTIFREQUENCY_ARRAY_SIZE; j++)   /* Here we start an outer frequency loop. */ 
+
+    //while (1) /* this outerloop just keeps running through the multifrequency sweep. */
+    //{
+
+      for (j = 0; j <= MULTIFREQUENCY_ARRAY_SIZE; j++)   /* Here we start an outer frequency loop. */
       {    
-    
+          if (j == MULTIFREQUENCY_ARRAY_SIZE) {  // reset J
+            j = 0;
+          }
+
         //seq_afe_fast_acmeasBioZ_4wire
         /* recalculate FCW here, based on number in array. */
         uint64_t FREQ = multifrequency[j];
@@ -428,9 +430,7 @@ int main(void) {
         char                stringfrequency[MSG_MAXLEN];
         sprintf(stringfrequency, "%s;", stringfreqs[j]);
         
-        if (j >= MULTIFREQUENCY_ARRAY_SIZE) {  // reset J 
-          j = 0;
-        }
+
         
         /* Update FCW in the sequence */
         seq_afe_fast_acmeasBioZ_4wire[3] = SEQ_MMR_WRITE(REG_AFE_AFE_WG_FCW, FCW);
@@ -440,7 +440,7 @@ int main(void) {
         /* Recalculate CRC in software for the AC measurement, because we changed   */
         /* FCW and sine amplitude settings                                          */
         adi_AFE_EnableSoftwareCRC(hDevice, true);
-        
+
         int max = 1; // do only 5  runs of each frequency. I am not successfully changing frequency. 
         //  int iterator = 0;
       
@@ -456,6 +456,7 @@ int main(void) {
             FAIL("Impedance Measurement");
           }         
           
+
           /* Convert DFT results to 1.15 and 1.31 formats.  */
           convert_dft_results(dft_results, dft_results_q15, dft_results_q31);
           
@@ -467,27 +468,28 @@ int main(void) {
           rtiaAndGain = (uint32_t)((RTIA * 1.5) / INST_AMP_GAIN);
           magnitude_result[0] = calculate_magnitude(magnitude[1], magnitude[0], rtiaAndGain);
           // 
-          char                msg[MSG_MAXLEN] = {0};
-          char                tmp[300] = {0};  
+          char                msg[300] = {0};
+          char                tmp[300] = {0};
           sprintf(msg, "%s:", "magnitudes");
           strcat(msg,stringfrequency);
-        
-          sprintf_fixed32(tmp, magnitude_result[0]);
-          strcat(msg,tmp);
-          strcat(msg," \r\n");       
+//TODO:
+          //sprintf_fixed32(tmp, magnitude_result[0]);
+//          sprintf(msg, "0x%02x", magnitude_result[0]);
+    	  BlinkSetup();
+    	  Blink();
+    	  return 0;
+//          strcat(msg,tmp);
+          strcat(msg," \r\n");
           PRINT(msg);
-          
-          sweep_iterator++;
-          if (sweep_iterator >= sweep_max) {
-            sweeping = 0;
-            break;
-          }
-          
+
+
+
         }
       }
         
-    }
-    
+    //}
+
+
     /* Restore to using default CRC stored with the sequence */
     // adi_AFE_EnableSoftwareCRC(hDevice, false); 
 
@@ -507,7 +509,7 @@ int main(void) {
     uart_UnInit();
 
     PASS();
-
+    return 0;
 }
   
 void delay(uint32_t count)
@@ -688,26 +690,31 @@ fixed32_t calculate_phase(q15_t phase_1, q15_t phase_2) {
 
 
 /* Simple conversion of a fixed32_t variable to string format. */
-void sprintf_fixed32(char *out, fixed32_t in) {
-    fixed32_t   tmp;
-    
-    if (in.full < 0) {
+void sprintf_fixed32(char *out, fixed32_t in)
+{
+    fixed32_t tmp;
+
+    if (in.full < 0)
+    {
         tmp.parts.fpart = (16 - in.parts.fpart) & 0x0F;
         tmp.parts.ipart = in.parts.ipart;
-        if (0 != in.parts.fpart) {
+        if (0 != in.parts.fpart)
+        {
             tmp.parts.ipart++;
         }
-        if (0 == tmp.parts.ipart) {
+        if (0 == tmp.parts.ipart)
+        {
             sprintf(out, "      -0.%04d", tmp.parts.fpart * FIXED32_LSB_SIZE);
         }
-        else {
+        else
+        {
             sprintf(out, "%8d.%04d", tmp.parts.ipart, tmp.parts.fpart * FIXED32_LSB_SIZE);
         }
     }
-    else {
+    else
+    {
         sprintf(out, "%8d.%04d", in.parts.ipart, in.parts.fpart * FIXED32_LSB_SIZE);
     }
-
 }
 
 /* Helper function for printing fixed32_t (magnitude & phase) results */
@@ -1008,7 +1015,7 @@ uint32_t BuildSeconds(void)
     char Month[4];
 
     // parse the build timestamp
-    sscanf(timestamp, "%s %d %d %d:%d:%d", Month, &date, &year, &hours, &minutes, &seconds);
+    sscanf(timestamp, "%s %lu %lu %lu:%lu:%lu", Month, &date, &year, &hours, &minutes, &seconds);
 
     // parse ASCII month to a value
     if     ( !strncmp(Month, "Jan", 3 )) month = 1;

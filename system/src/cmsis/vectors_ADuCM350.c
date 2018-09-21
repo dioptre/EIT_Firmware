@@ -251,7 +251,8 @@ WEAK_FUNC (void ResetISR (void)) {
 #endif
 
 #ifdef __GNUC__
-	//AG
+    //AG
+
 	#if defined(NDEBUG)
 	unsigned long *pulSrc, *pulDest;
 
