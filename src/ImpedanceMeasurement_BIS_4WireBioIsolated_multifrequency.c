@@ -23,7 +23,7 @@ License Agreement.
 #include <stdio.h>   // for scanf
 #include <string.h>  // for strncmp
 #include <stdint.h>
-
+#define ARM_MATH_CM3 1
 #include "arm_math.h"
 #include "test_common.h"
 #include "afe.h"
@@ -243,8 +243,12 @@ uint32_t seq_afe_fast_acmeasBioZ_4wire[] = {
 //
 
 
+extern void initialise_monitor_handles(void);
 
 int main(void) {
+#ifdef DEBUG
+	initialise_monitor_handles();
+#endif
     ADI_AFE_DEV_HANDLE  hDevice;
     int16_t             dft_results[DFT_RESULTS_COUNT];
     q15_t               dft_results_q15[DFT_RESULTS_COUNT];
