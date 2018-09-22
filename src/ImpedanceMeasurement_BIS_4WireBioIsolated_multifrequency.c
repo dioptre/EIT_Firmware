@@ -412,11 +412,12 @@ int main(void) {
 
 
     PRINT("READY TO START FOR LOOP\n");     
+    BlinkSetup();
 
     //while (1) /* this outerloop just keeps running through the multifrequency sweep. */
     //{
 
-      for (j = 0; j <= MULTIFREQUENCY_ARRAY_SIZE; j++)   /* Here we start an outer frequency loop. */
+      for (j = 0; j < 1; j++)   /* Here we start an outer frequency loop. */
       {    
           if (j == MULTIFREQUENCY_ARRAY_SIZE) {  // reset J
             j = 0;
@@ -445,7 +446,7 @@ int main(void) {
         //  int iterator = 0;
       
         //  while (running) {
-        for (k = 0; k < max ; k++)  
+        //for (k = 0; k < max ; k++)
         {   
       
           fixed32_t           magnitude_result[DFT_RESULTS_COUNT / 2 - 1]={0};
@@ -474,13 +475,13 @@ int main(void) {
           strcat(msg,stringfrequency);
 //TODO:
           //sprintf_fixed32(tmp, magnitude_result[0]);
-//          sprintf(msg, "0x%02x", magnitude_result[0]);
-    	  BlinkSetup();
+          //sprintf(msg, "0x%02x", magnitude_result[0].parts.ipart);
+
     	  Blink();
-    	  return 0;
+    	  //return 0;
 //          strcat(msg,tmp);
-          strcat(msg," \r\n");
-          PRINT(msg);
+          //strcat(msg," \r\n");
+          //PRINT(msg);
 
 
 
@@ -493,22 +494,22 @@ int main(void) {
     /* Restore to using default CRC stored with the sequence */
     // adi_AFE_EnableSoftwareCRC(hDevice, false); 
 
-    /* AFE Power Down */
-    if (ADI_AFE_SUCCESS != adi_AFE_PowerDown(hDevice)) 
-    {
-        FAIL("PowerDown");
-    }
-
-    /* Uninitialize the AFE API */
-    if (ADI_AFE_SUCCESS != adi_AFE_UnInit(hDevice)) 
-    {
-        FAIL("Uninit");
-    }
-    
-    /* Uninitilize the UART */
-    uart_UnInit();
-
-    PASS();
+//    /* AFE Power Down */
+//    if (ADI_AFE_SUCCESS != adi_AFE_PowerDown(hDevice))
+//    {
+//        FAIL("PowerDown");
+//    }
+//
+//    /* Uninitialize the AFE API */
+//    if (ADI_AFE_SUCCESS != adi_AFE_UnInit(hDevice))
+//    {
+//        FAIL("Uninit");
+//    }
+//
+//    /* Uninitilize the UART */
+//    uart_UnInit();
+//
+//    PASS();
     return 0;
 }
   
