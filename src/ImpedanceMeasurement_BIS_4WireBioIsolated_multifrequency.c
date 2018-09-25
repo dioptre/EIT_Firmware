@@ -261,7 +261,10 @@ int main(void) {
     uint32_t            offset_code;
     uint32_t            gain_code;
     uint32_t            rtiaAndGain;
+    int8_t              sweeping;
     int8_t              j,k;
+
+    sweeping = SWEEPING;
     
     uint64_t multifrequency[] = {200,500,800,1000,2000,5000,8000,10000,15000,20000,30000,40000,50000,60000,70000};
     char *stringfreqs[MULTIFREQUENCY_ARRAY_SIZE];
@@ -394,8 +397,6 @@ int main(void) {
         FAIL("adi_AFE_WriteCalibrationRegister, offset");
     }
 
-
-
     /* Update FCW in the sequence */
     //seq_afe_poweritup[3] = SEQ_MMR_WRITE(REG_AFE_AFE_WG_FCW, FCW);
     /* Update sine amplitude in the sequence */
@@ -413,18 +414,14 @@ int main(void) {
     // PRINT("AFE PROBLEM!");
     //}        
 
-
     PRINT("READY TO START FOR LOOP\n");     
-    BlinkSetup();
+    int sweep_max         = 10000;        // do only hundred runs of each frequency sweep.
+    int sweep_iterator    = 0;
 
-    //while (1) /* this outerloop just keeps running through the multifrequency sweep. */
-    //{
-
-      for (j = 0; j < 1; j++)   /* Here we start an outer frequency loop. */
+    while (sweeping) /* this outerloop just keeps running through the multifrequency sweep. */
+    {
+      for (j = 0; j < MULTIFREQUENCY_ARRAY_SIZE; j++)   /* Here we start an outer frequency loop. */
       {    
-          if (j == MULTIFREQUENCY_ARRAY_SIZE) {  // reset J
-            j = 0;
-          }
 
         //seq_afe_fast_acmeasBioZ_4wire
         /* recalculate FCW here, based on number in array. */
@@ -434,7 +431,9 @@ int main(void) {
         char                stringfrequency[MSG_MAXLEN];
         sprintf(stringfrequency, "%s;", stringfreqs[j]);
         
-
+        if (j >= MULTIFREQUENCY_ARRAY_SIZE) {  // reset J
+          j = 0;
+        }
         
         /* Update FCW in the sequence */
         seq_afe_fast_acmeasBioZ_4wire[3] = SEQ_MMR_WRITE(REG_AFE_AFE_WG_FCW, FCW);
@@ -449,7 +448,7 @@ int main(void) {
         //  int iterator = 0;
       
         //  while (running) {
-        //for (k = 0; k < max ; k++)
+        for (k = 0; k < max ; k++)
         {   
       
           fixed32_t           magnitude_result[DFT_RESULTS_COUNT / 2 - 1]={0};
@@ -460,7 +459,6 @@ int main(void) {
             FAIL("Impedance Measurement");
           }         
           
-
           /* Convert DFT results to 1.15 and 1.31 formats.  */
           convert_dft_results(dft_results, dft_results_q15, dft_results_q31);
           
@@ -472,48 +470,48 @@ int main(void) {
           rtiaAndGain = (uint32_t)((RTIA * 1.5) / INST_AMP_GAIN);
           magnitude_result[0] = calculate_magnitude(magnitude[1], magnitude[0], rtiaAndGain);
           // 
-          char                msg[300] = {0};
+          char                msg[MSG_MAXLEN] = {0};
           char                tmp[300] = {0};
           sprintf(msg, "%s:", "magnitudes");
           strcat(msg,stringfrequency);
-//TODO:
-          //sprintf_fixed32(tmp, magnitude_result[0]);
-          //sprintf(msg, "0x%02x", magnitude_result[0].parts.ipart);
 
-    	  Blink();
-    	  //return 0;
-//          strcat(msg,tmp);
-          //strcat(msg," \r\n");
-          //PRINT(msg);
+          sprintf_fixed32(tmp, magnitude_result[0]);
+          strcat(msg,tmp);
+          strcat(msg," \r\n");
+          PRINT(msg);
 
-
+          sweep_iterator++;
+          if (sweep_iterator >= sweep_max) {
+            sweeping = 0;
+            break;
+          }
 
         }
       }
         
-    //}
-
+    }
 
     /* Restore to using default CRC stored with the sequence */
-    // adi_AFE_EnableSoftwareCRC(hDevice, false); 
+    // adi_AFE_EnableSoftwareCRC(hDevice, false);
 
-//    /* AFE Power Down */
-//    if (ADI_AFE_SUCCESS != adi_AFE_PowerDown(hDevice))
-//    {
-//        FAIL("PowerDown");
-//    }
-//
-//    /* Uninitialize the AFE API */
-//    if (ADI_AFE_SUCCESS != adi_AFE_UnInit(hDevice))
-//    {
-//        FAIL("Uninit");
-//    }
-//
-//    /* Uninitilize the UART */
-//    uart_UnInit();
-//
-//    PASS();
+    /* AFE Power Down */
+    if (ADI_AFE_SUCCESS != adi_AFE_PowerDown(hDevice))
+    {
+        FAIL("PowerDown");
+    }
+
+    /* Uninitialize the AFE API */
+    if (ADI_AFE_SUCCESS != adi_AFE_UnInit(hDevice))
+    {
+        FAIL("Uninit");
+    }
+
+    /* Uninitilize the UART */
+    uart_UnInit();
+
+    PASS();
     return 0;
+
 }
   
 void delay(uint32_t count)
