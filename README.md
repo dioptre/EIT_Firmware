@@ -1,3 +1,6 @@
+# Please Note
+* This is my fork (Andrew Grosser) and is not official yet. Please check out the main projects at https://github.com/OpenEIT
+
 # Intro
 
 * Note: Installation of GCC firmware development environment is here (https://github.com/dioptre/ADuCM350). 
