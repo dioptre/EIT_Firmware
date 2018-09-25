@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -larm_cortexM3l_math -lgcc -lc -lm
+LIBS := -lrdimon -lc -lgcc -lm -lnosys
 
