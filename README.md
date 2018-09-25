@@ -83,7 +83,6 @@ git push origin mybranch
 ## Contributors
 
 * Jean Rintoul
-* Moritz von Buttlar
 * Andrew Grosser
 
 ## License

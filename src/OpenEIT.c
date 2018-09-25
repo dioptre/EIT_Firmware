@@ -1,6 +1,6 @@
 /**********************************
 
-Author: Jean Rintoul , Mindseye Biomedical LLC 
+Authors: Jean Rintoul , Mindseye Biomedical LLC; Andrew Grosser, SF Product Labs LLC;
 This software is modified from an original Analog Devices example, 
 It's original copyright notice is included below. 
 
