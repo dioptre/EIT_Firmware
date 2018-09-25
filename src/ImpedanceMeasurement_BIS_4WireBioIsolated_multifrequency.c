@@ -80,6 +80,9 @@ License Agreement.
 /* Helper macro for printing strings to UART or Std. Output */
 #define PRINT(s)                    test_print(s)
 
+/* Helper to do 64 bit division - Required for Cortex M3 (32 bit only division)*/
+#define DIV64(a,b,c) __divmoddi4(a,b,c)
+
 /* Custom fixed-point type used for final results,              */
 /* to keep track of the decimal point position.                 */
 /* Signed number with 28 integer bits and 4 fractional bits.    */
@@ -653,9 +656,12 @@ fixed32_t calculate_magnitude(q31_t magnitude_1, q31_t magnitude_2, uint32_t res
 
     magnitude = (q63_t)0;
     if ((q63_t)0 != magnitude_2) {
-        magnitude = (q63_t)magnitude_1 * (q63_t)res;                            
+        magnitude = ((q63_t)magnitude_1 * (q63_t)res) << 5;                           
         /* Shift up for additional precision and rounding */
-        magnitude = (magnitude << 5) / (q63_t)magnitude_2;
+        //magnitude = (magnitude << 5) / (q63_t)magnitude_2; //WTF BREAKS
+        //TODO: AG Do something with rem(ainder)
+        int64_t rem = 0x00000000;
+        magnitude = (q63_t)DIV64((int64_t)magnitude, (int64_t)magnitude_2, &rem);
         /* Rounding */
         magnitude = (magnitude + 1) >> 1;
     }

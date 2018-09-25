@@ -5,7 +5,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../src/Blink.c \
-../src/ImpedanceMeasurement_BIS_4WireBioIsolated_multifrequency.c \
+../src/Impedance4WireTest.c \
 ../src/PinMux.c \
 ../src/Timer.c \
 ../src/_write.c \
@@ -14,7 +14,7 @@ C_SRCS += \
 
 OBJS += \
 ./src/Blink.o \
-./src/ImpedanceMeasurement_BIS_4WireBioIsolated_multifrequency.o \
+./src/Impedance4WireTest.o \
 ./src/PinMux.o \
 ./src/Timer.o \
 ./src/_write.o \
@@ -23,7 +23,7 @@ OBJS += \
 
 C_DEPS += \
 ./src/Blink.d \
-./src/ImpedanceMeasurement_BIS_4WireBioIsolated_multifrequency.d \
+./src/Impedance4WireTest.d \
 ./src/PinMux.d \
 ./src/Timer.d \
 ./src/_write.d \
