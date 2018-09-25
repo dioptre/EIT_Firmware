@@ -95,5 +95,5 @@ There are multiple licenses in the /LICENSES folder. Please understand and accep
 * Other licenses may have been used to develop and source this software. Please see /LICENSES for more information and find specific license information for files in some of the headers. 
 
 
-## Help I stuffed/bricked my chip
+## Help I bricked my chip
 * Use the CM3WSD software that comes with the EVAL SDK (link above) board to erase it. Might need a friend with a Windows box to do this.
