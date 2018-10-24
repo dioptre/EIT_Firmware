@@ -91,7 +91,7 @@ git push origin mybranch
 ## License
 
 There are multiple licenses in the /LICENSES folder. Please understand and accept all of them. Of note:
-* The main executable file (OpenEIT.c) is licensed in part under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License.
+* The main executable file (OpenEIT.c) is licensed in part under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License **THIS IS A VERY RESTRICTIVE NON-COMMERCIAL LICENSE**.
 * Otherwise where not specifically stated, this repository and all source code is licensed under the Apache License v2 (https://www.apache.org/licenses/LICENSE-2.0.html). Any contributions submitted to this project fall under the Apache License.
 * I'd like to thank Analog Devices for their permission to use and redistribute the original software (See /LICENSES/ADI.LABLAB.LICENSE) taken from their ADUCM350 SDK (http://www.analog.com/en/products/aducm350.html). Please assume we've modified the original versions.
 * Other licenses may have been used to develop and source this software. Please see /LICENSES for more information and find specific license information for files in some of the headers. 
